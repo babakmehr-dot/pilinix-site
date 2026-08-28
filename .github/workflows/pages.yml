@@ -35,4 +35,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-# refresh deployment after full-page build
+# refresh deployment after navigation fix
