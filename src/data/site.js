@@ -3,4 +3,4 @@
 export const CONTACT_EMAIL = 'babakmehr@gmail.com';
 
 export const SIMULATION_DISCLOSURE =
-  'Interactive simulation · Illustrative data · No live monitoring or external actions';
+  'Interactive demonstration · Illustrative data · No live monitoring and no external action';

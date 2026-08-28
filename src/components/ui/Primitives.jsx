@@ -3,7 +3,7 @@ import {
   Ban, CircleCheck, CircleSlash, FileText, Info, Pause, Send, ShieldAlert,
   ShieldCheck, Timer, TriangleAlert,
 } from 'lucide-react';
-import { strengthLabels, strengthTone } from '../../data/supplierScenario.js';
+import { strengthLabels, strengthTone } from '../../data/signalScenarios.js';
 
 export function LogoMark() {
   return (
@@ -49,6 +49,9 @@ export function Disclosure({ children, icon = true }) {
 }
 
 const statusIcons = {
+  idle: FileText,
+  none: CircleCheck,
+  completed: CircleCheck,
   prepared: FileText,
   pending: ShieldAlert,
   approved: ShieldCheck,
@@ -84,11 +87,15 @@ export function StrengthTag({ strength }) {
   );
 }
 
-/** Small fact card: value + status, per the shared visual language. */
-export function FactCard({ label, value, note, tone }) {
+/** Small fact card: value + status, per the shared visual language.
+ *  `carried` marks a fact written back by an earlier completed cycle. */
+export function FactCard({ label, value, note, tone, carried }) {
   return (
-    <div className={`fact-card${tone ? ` tone-${tone}` : ''}`}>
-      <span className="fact-label">{label}</span>
+    <div className={`fact-card${tone ? ` tone-${tone}` : ''}${carried ? ' is-carried' : ''}`}>
+      <span className="fact-label">
+        {label}
+        {carried && <span className="carried-tag">carried in</span>}
+      </span>
       <span className="fact-value">{value}</span>
       {note && <span className="fact-note">{note}</span>}
     </div>

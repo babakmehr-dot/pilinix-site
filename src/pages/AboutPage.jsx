@@ -17,38 +17,43 @@ export default function AboutPage() {
     <>
       <section className="about-hero section-shell">
         <div className="eyebrow">ABOUT PILINIX</div>
-        <motion.h1 {...rise(0)}>Real decisions rarely live inside a prompt.</motion.h1>
+        <motion.h1 {...rise(0)}>The world changes continuously.</motion.h1>
         <motion.p className="about-lead" {...rise(0.08)}>
-          They depend on circumstances, evidence, timing, and the consequences of being wrong.
+          But the same change does not mean the same thing to everyone.
         </motion.p>
         <ul className="about-pillars">
           {pillars.map((p, i) => (
-            <motion.li key={p} {...rise(0.14 + i * 0.05)}>
-              {p}
-            </motion.li>
+            <motion.li key={p} {...rise(0.14 + i * 0.05)}>{p}</motion.li>
           ))}
         </ul>
       </section>
 
       <section className="section-shell about-body">
         <motion.p {...rise(0)}>
-          Pilinix is an AI product company exploring how those pieces can work together. Our interests
-          span family life, business decisions, and cross-border opportunities.
+          Real decisions rarely live inside a prompt. They depend on circumstances,
+          evidence, timing, and the consequences of being wrong.
         </motion.p>
-        <motion.p {...rise(0.06)}>
-          We start with a situation people need to handle. Then we ask what a system should notice,
+        <motion.p {...rise(0.05)}>
+          Pilinix builds intelligent systems that connect external change to real context,
+          evidence, decisions and action. Our interests span family life, business
+          decisions, and cross-border opportunities.
+        </motion.p>
+        <motion.p {...rise(0.1)}>
+          We are interested in the full cycle: what changed, who it matters to, what it
+          means, what should happen next, and what happened after the action. We start
+          with a situation people need to handle, then ask what a system should notice,
           what it should verify, and what should remain under human control.
         </motion.p>
-        <motion.p className="about-closing" {...rise(0.12)}>
-          Pilinix builds for that gap.
+        <motion.p className="about-closing" {...rise(0.15)}>
+          Pilinix builds for that loop.
         </motion.p>
       </section>
 
       <section className="section-shell name-origin-quiet">
         <div className="eyebrow">THE NAME</div>
         <p>
-          <strong>PILINIX</strong> — Platform Intelligence Layer for Integrated Network Infrastructure
-          and eXecution. It is first and foremost the name of the company.
+          <strong>PILINIX</strong> — Platform Intelligence Layer for Integrated Network
+          Infrastructure and eXecution. It is first and foremost the name of the company.
         </p>
       </section>
     </>

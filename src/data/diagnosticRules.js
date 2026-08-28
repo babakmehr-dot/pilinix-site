@@ -89,6 +89,18 @@ export const results = {
     next: 'Keep the decision with a person and use software to assemble evidence and options for them.',
     limitation: 'Where accountability sits is a business and legal question. This guide cannot answer it for you.',
   },
+  'ai-assistance': {
+    title: 'AI assistance',
+    accent: '#8fd9ff',
+    next: 'Let a system assemble the evidence and draft the options, and keep the choice with a person.',
+    limitation: 'Assistance still needs somewhere to put its output. If nobody reads it, this changes nothing.',
+  },
+  'mixed-system': {
+    title: 'A mixed system',
+    accent: '#c79cff',
+    next: 'Split the work: fixed rules for the stable path, interpretation only where the variation actually is.',
+    limitation: 'Splitting work adds a seam. The handover between the two halves is where this usually fails.',
+  },
   insufficient: {
     title: 'Not enough information yet',
     accent: '#94a0af',
@@ -145,6 +157,29 @@ export const rules = [
     why: 'The steps are describable and nothing needs interpreting. An agent would add moving parts without adding judgment.',
     change: 'Frequent exceptions that need interpreting across sources would change this result.',
     mixed: (a) => (a.access === 'partly' ? 'once the missing access is in place' : null),
+  },
+  {
+    id: 'assist-not-act',
+    label: 'Interpretation needed, but the consequence is not easily reversed',
+    when: (a) =>
+      (a.interpretation === 'yes' || a.interpretation === 'sometimes') &&
+      a.consequence === 'moderate-reviewable' &&
+      a.rules === 'mostly-no',
+    result: 'ai-assistance',
+    why: 'The work needs interpretation, but the steps cannot be described well enough to hand over. A system can gather and draft; the choice stays with a person.',
+    change: 'If the steps became describable, or the consequences trivially reversible, an agent could take more of it.',
+  },
+  {
+    id: 'split-work',
+    label: 'A stable path and a variable path in the same work',
+    when: (a) =>
+      a.rules === 'mixed' &&
+      (a.interpretation === 'yes' || a.interpretation === 'sometimes') &&
+      (a.consequence === 'low-reversible' || a.consequence === 'moderate-reviewable'),
+    result: 'mixed-system',
+    why: 'Part of this is describable and part of it is not. Treating it as one problem forces a choice that neither half needs.',
+    change: 'If the variable part shrank to nothing, fixed rules would cover the whole job.',
+    mixed: (a) => (a.consequence === 'moderate-reviewable' ? 'with review where the two halves meet' : null),
   },
   {
     id: 'interpretation-needed',
@@ -223,7 +258,7 @@ export function evaluate(answers) {
 
 // One worked example, drawn from the supplier scenario on this site.
 export const example = {
-  label: 'Monitoring supplier notices for one purchasing decision',
+  label: 'Running the monitoring loop shown on this site for one purchasing decision',
   answers: {
     owner: 'yes',
     access: 'partly',

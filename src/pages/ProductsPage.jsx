@@ -5,6 +5,15 @@ import { ArrowRight } from 'lucide-react';
 import { PageHero, SectionHeading } from '../components/ui/Primitives.jsx';
 import { productDetails, products } from '../data/products.js';
 
+// How each product is intended to run the loop. Kept short: the product pages
+// themselves are unchanged in this pass.
+const cycleNote = {
+  fampal:
+    'FAMPAL is designed to watch the environments a household already depends on — benefits and program rules, deadlines, local services and activities, and costs that recur — then discover what changed, check it against that family’s context, and turn it into a next step rather than another listing.',
+  ariment:
+    'ARIMENT is designed to watch programs, criteria, evidence requirements and timing across borders, then compare each change against one profile: what it means for eligibility, what evidence is now missing, and what should happen before an intake window closes.',
+};
+
 function ProductRow({ p, i }) {
   const Icon = p.icon;
   return (
@@ -38,14 +47,15 @@ export function ProductsPage() {
     <>
       <PageHero
         eyebrow="PRODUCTS"
-        title="A portfolio built around decisions, not demos."
-        copy="Each Pilinix product owns a different real-world problem where context, evidence, state and action matter."
+        title="The same cycle, inside a domain."
+        copy="FAMPAL and ARIMENT are the products we are building first. Each one runs the full Pilinix loop in its own environment rather than consuming signals from somewhere else."
       />
       <section className="section-shell portfolio-intro">
         <div className="portfolio-kicker">THE PORTFOLIO</div>
         <p>
-          Different domains. The same operating idea: observe what matters, understand context, decide
-          what should happen next and help move the work forward.
+          Different domains. The same operating idea: watch a relevant environment, find the
+          change, work out whether it matters to this situation, decide what should happen
+          next, and check what actually happened.
         </p>
       </section>
       <section className="section-shell product-list-full">
@@ -139,6 +149,14 @@ export function ProductDetailPage() {
           ))}
         </div>
       </section>
+      {cycleNote[slug] && (
+        <section className="section-shell">
+          <div className="product-cycle-note">
+            <h3 className="micro-label">In the Pilinix cycle</h3>
+            <p>{cycleNote[slug]}</p>
+          </div>
+        </section>
+      )}
       <section className="section-shell product-cta">
         <div>
           <div className="eyebrow">CURRENT STAGE</div>
