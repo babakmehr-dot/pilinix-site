@@ -1,0 +1,39 @@
+name: Fix Pilinix navigation
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  fix:
+    if: github.event.head_commit.message == 'Add navigation fix workflow'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch public navigation
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('src/main.jsx')
+          s=p.read_text()
+          s=s.replace('<NavLink to="/" className="brand"><LogoMark/><span>PILINIX</span></NavLink>','<a href="#/" className="brand"><LogoMark/><span>PILINIX</span></a>')
+          s=s.replace('<nav className="desktop-nav">{nav.map(([l,p])=><NavLink key={p} to={p}>{l}</NavLink>)}<NavLink to="/products" className="nav-cta">Explore Products <ArrowRight size={15}/></NavLink></nav>','<nav className="desktop-nav">{nav.map(([l,p])=><a key={p} href={`#${p}`}>{l}</a>)}<a href="#/products" className="nav-cta">Explore Products <ArrowRight size={15}/></a></nav>')
+          s=s.replace('{nav.map(([l,p])=><NavLink key={p} to={p}>{l}</NavLink>)}','{nav.map(([l,p])=><a key={p} href={`#${p}`}>{l}</a>)}')
+          s=s.replace('<button className="primary" onClick={()=>navigate(\'/products\')}>Explore Products <ArrowRight size={18}/></button>','<a className="primary" href="#/products">Explore Products <ArrowRight size={18}/></a>')
+          s=s.replace('<button className="ghost" onClick={()=>navigate(\'/thinking\')}>How Pilinix Thinks</button>','<a className="ghost" href="#/thinking">How Pilinix Thinks</a>')
+          s=s.replace('<button className="ghost" onClick={()=>navigate(\'/thinking\')}>Explore the model <ArrowRight size={16}/></button>','<a className="ghost" href="#/thinking">Explore the model <ArrowRight size={16}/></a>')
+          s=s.replace('<NavLink className="text-link" to={`/products/${p.slug}`}>Explore {p.name} <ArrowRight size={15}/></NavLink>','<a className="text-link" href={`#/products/${p.slug}`}>Explore {p.name} <ArrowRight size={15}/></a>')
+          s=s.replace('<NavLink to={`/products/${p.slug}`} className="round-link" aria-label={`Open ${p.name}`}><ArrowRight/></NavLink>','<a href={`#/products/${p.slug}`} className="round-link" aria-label={`Open ${p.name}`}><ArrowRight/></a>')
+          s=s.replace('<NavLink className="ghost" to="/products">Back to Products</NavLink>','<a className="ghost" href="#/products">Back to Products</a>')
+          s=s.replace('<NavLink to="/products">Products</NavLink><NavLink to="/lab">Lab</NavLink><NavLink to="/about">About</NavLink><NavLink to="/contact">Contact</NavLink>','<a href="#/products">Products</a><a href="#/lab">Lab</a><a href="#/about">About</a><a href="#/contact">Contact</a>')
+          p.write_text(s)
+          PY
+      - run: npm ci
+      - run: npm run build
+      - name: Commit navigation fix
+        run: |
+          git config user.name "babakmehr-dot"
+          git config user.email "babakmehr@gmail.com"
+          git add src/main.jsx
+          git commit -m "Fix public navigation links"
+          git push
