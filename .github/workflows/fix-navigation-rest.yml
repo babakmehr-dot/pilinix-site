@@ -1,0 +1,39 @@
+name: Fix Pilinix navigation REST
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  fix:
+    if: github.event.head_commit.message == 'Add navigation REST fix workflow'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch navigation and update through GitHub API
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('src/main.jsx')
+          s=p.read_text()
+          replacements = [
+            ('<NavLink to="/" className="brand"><LogoMark/><span>PILINIX</span></NavLink>','<a href="#/" className="brand"><LogoMark/><span>PILINIX</span></a>'),
+            ('<nav className="desktop-nav">{nav.map(([l,p])=><NavLink key={p} to={p}>{l}</NavLink>)}<NavLink to="/products" className="nav-cta">Explore Products <ArrowRight size={15}/></NavLink></nav>','<nav className="desktop-nav">{nav.map(([l,p])=><a key={p} href={`#${p}`}>{l}</a>)}<a href="#/products" className="nav-cta">Explore Products <ArrowRight size={15}/></a></nav>'),
+            ('{nav.map(([l,p])=><NavLink key={p} to={p}>{l}</NavLink>)}','{nav.map(([l,p])=><a key={p} href={`#${p}`}>{l}</a>)}'),
+            ('<button className="primary" onClick={()=>navigate(\'/products\')}>Explore Products <ArrowRight size={18}/></button>','<a className="primary" href="#/products">Explore Products <ArrowRight size={18}/></a>'),
+            ('<button className="ghost" onClick={()=>navigate(\'/thinking\')}>How Pilinix Thinks</button>','<a className="ghost" href="#/thinking">How Pilinix Thinks</a>'),
+            ('<button className="ghost" onClick={()=>navigate(\'/thinking\')}>Explore the model <ArrowRight size={16}/></button>','<a className="ghost" href="#/thinking">Explore the model <ArrowRight size={16}/></a>'),
+            ('<NavLink className="text-link" to={`/products/${p.slug}`}>Explore {p.name} <ArrowRight size={15}/></NavLink>','<a className="text-link" href={`#/products/${p.slug}`}>Explore {p.name} <ArrowRight size={15}/></a>'),
+            ('<NavLink to={`/products/${p.slug}`} className="round-link" aria-label={`Open ${p.name}`}><ArrowRight/></NavLink>','<a href={`#/products/${p.slug}`} className="round-link" aria-label={`Open ${p.name}`}><ArrowRight/></a>'),
+            ('<NavLink className="ghost" to="/products">Back to Products</NavLink>','<a className="ghost" href="#/products">Back to Products</a>'),
+            ('<NavLink to="/products">Products</NavLink><NavLink to="/lab">Lab</NavLink><NavLink to="/about">About</NavLink><NavLink to="/contact">Contact</NavLink>','<a href="#/products">Products</a><a href="#/lab">Lab</a><a href="#/about">About</a><a href="#/contact">Contact</a>')
+          ]
+          for a,b in replacements: s=s.replace(a,b)
+          p.write_text(s)
+          PY
+          SHA=$(gh api repos/${{ github.repository }}/contents/src/main.jsx --jq .sha)
+          CONTENT=$(base64 -w 0 src/main.jsx)
+          jq -n --arg msg 'Fix public navigation links' --arg content "$CONTENT" --arg sha "$SHA" '{message:$msg,content:$content,sha:$sha,branch:"main"}' > /tmp/payload.json
+          gh api --method PUT repos/${{ github.repository }}/contents/src/main.jsx --input /tmp/payload.json
